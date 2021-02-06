@@ -3,7 +3,6 @@ import { useState } from 'react';
 // import Actions from './components/Actions/Actions';
 
 const figures = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0'];
-// const actions = ['+', '-', '/', '*', '.', '='];
 const actionType = {
   plus: '+',
   minus: '-',
@@ -15,53 +14,65 @@ const actionType = {
 const actions = Object.values(actionType);
 
 function App() {
-  const [initialValue, setInitialValue] = useState(true);
   const [figure, setFigure] = useState('');
-  const [prevValue, setPrevValue] = useState('');
   const [action, setActions] = useState('');
   const [result, setResult] = useState(0);
 
   const number = Number(figure);
 
   const event = () => {
-    if (action === actionType.plus || action === actionType.equal) {
-      setPrevValue(number);
-      setFigure('');
-      setResult(prevValue + number);
-      setActions('');
-      setPrevValue(state => state + Number(result));
+    let res = result;
+
+    switch (action) {
+      case actionType.plus:
+        res = result + number;
+        break;
+      case actionType.minus:
+        res = result - number;
+        break;
+      case actionType.multiplication:
+        res = result * number;
+        break;
+      case actionType.division:
+        res = result / number;
+        break;
+      default:
+        return;
     }
-
-    // if (action === actionType.minus || action === actionType.equal) {
-    //   setPrevValue(number);
-    //   setFigure('');
-    //   setResult(prevValue - number);
-    //   setActions('');
-    //   setPrevValue(state => state - Number(result));
-    // }
-
-    console.log('prevValue: ', prevValue);
-    console.log('result: ', Number(result));
+    setResult(res);
+    setFigure('');
   };
-
-  event();
 
   const getFigure = figure => {
-    setFigure(state => state.concat(figure));
-    setInitialValue(false);
+    setFigure(state => {
+      if (state === '' && figure === '0') {
+        return state;
+      }
+
+      return state.concat(figure);
+    });
   };
 
-  const getAction = action => {
-    setActions(action);
+  const getAction = a => {
+    if (action) {
+      event();
+    } else {
+      setResult(number);
+      setFigure('');
+    }
+
+    setActions(a);
   };
 
   const onClear = () => {
-    setInitialValue(true);
+    setResult('');
+    setFigure('');
+    setActions('');
   };
 
   return (
     <div className="container">
-      <p className="table">{initialValue ? '0' : figure || result}</p>
+      <p className="table">{figure || result || 0}</p>
       <div className="flex">
         <div className="figures-wrapper">
           {figures.map((figure, id) => (
@@ -79,14 +90,14 @@ function App() {
           </button>
         </div>
         <div className="actions-wrapper">
-          {actions.map((action, id) => (
+          {actions.map((a, id) => (
             <button
               key={id}
               type="button"
               className="figure-btn"
-              onClick={() => getAction(action)}
+              onClick={() => getAction(a)}
             >
-              {action}
+              {a}
             </button>
           ))}
         </div>
