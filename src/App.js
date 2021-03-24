@@ -3,6 +3,7 @@ import { useState } from 'react';
 // import Actions from './components/Actions/Actions';
 
 const figures = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0'];
+
 const actionType = {
   plus: '+',
   minus: '-',
@@ -10,37 +11,76 @@ const actionType = {
   division: '/',
   equal: '=',
 };
+const memoryType = {
+  plus: 'M+',
+  minus: 'M-',
+  memoryResult: 'MR',
+};
 
 const actions = Object.values(actionType);
+const memoryActions = Object.values(memoryType);
 
 function App() {
   const [figure, setFigure] = useState('');
   const [action, setActions] = useState('');
   const [result, setResult] = useState(0);
+  const [memoryResult, setMemoryResult] = useState(0);
+  const [disaplayMemory, setDisplayMemory] = useState(false);
 
-  const number = Number(figure);
+  let number = Number(figure);
 
   const event = () => {
-    let res = result;
-
     switch (action) {
       case actionType.plus:
-        res = result + number;
+        setResult(state => state + number);
         break;
       case actionType.minus:
-        res = result - number;
+        setResult(state => state - number);
         break;
       case actionType.multiplication:
-        res = result * number;
+        setResult(state => state * number);
         break;
       case actionType.division:
-        res = result / number;
+        setResult(state => state / number);
         break;
+      case actionType.equal:
+        return result;
       default:
         return;
     }
-    setResult(res);
+
     setFigure('');
+  };
+
+  const onMemoryEvent = memoryAction => {
+    let memRes = memoryResult;
+
+    switch (memoryAction) {
+      case memoryType.plus:
+        memRes += result;
+        onClear();
+        break;
+
+      case memoryType.minus:
+        memRes -= result;
+        onClear();
+        break;
+
+      case memoryType.memoryResult:
+        setResult(memoryResult);
+        break;
+
+      default:
+        return;
+    }
+
+    setMemoryResult(memRes);
+    setDisplayMemory(true);
+  };
+
+  const onMemoryClear = () => {
+    setDisplayMemory(false);
+    setMemoryResult(0);
   };
 
   const getFigure = figure => {
@@ -60,19 +100,22 @@ function App() {
       setResult(number);
       setFigure('');
     }
-
     setActions(a);
   };
 
   const onClear = () => {
-    setResult('');
+    setResult(0);
     setFigure('');
     setActions('');
   };
 
   return (
     <div className="container">
-      <p className="table">{figure || result || 0}</p>
+      <div className="table">
+        <p className="memory">{disaplayMemory && <span>MEMORY</span>}</p>
+        <p className="result">M {memoryResult}</p>
+        <p className="result">R {figure || result || 0}</p>
+      </div>
       <div className="flex">
         <div className="figures-wrapper">
           {figures.map((figure, id) => (
@@ -100,6 +143,25 @@ function App() {
               {a}
             </button>
           ))}
+        </div>
+        <div className="actions-wrapper">
+          {memoryActions.map((m, id) => (
+            <button
+              key={id}
+              type="button"
+              className="figure-btn"
+              onClick={() => onMemoryEvent(m)}
+            >
+              {m}
+            </button>
+          ))}
+          <button
+            type="button"
+            className="memory-clear"
+            onClick={() => onMemoryClear()}
+          >
+            MC
+          </button>
         </div>
       </div>
     </div>
