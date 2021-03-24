@@ -29,7 +29,7 @@ function App() {
 
   let number = Number(figure);
 
-  const event = () => {
+  const event = async () => {
     switch (action) {
       case actionType.plus:
         setResult(state => state + number);
@@ -48,8 +48,6 @@ function App() {
       default:
         return;
     }
-
-    setFigure('');
   };
 
   const onMemoryEvent = memoryAction => {
@@ -58,16 +56,20 @@ function App() {
     switch (memoryAction) {
       case memoryType.plus:
         memRes += result;
-        onClear();
+        setFigure('');
+        setActions('');
         break;
 
       case memoryType.minus:
         memRes -= result;
-        onClear();
+        setFigure('');
+        setActions('');
         break;
 
       case memoryType.memoryResult:
         setResult(memoryResult);
+        setFigure('');
+        setActions('');
         break;
 
       default:
@@ -94,13 +96,13 @@ function App() {
   };
 
   const getAction = a => {
+    setActions(a);
     if (action) {
       event();
     } else {
       setResult(number);
-      setFigure('');
     }
-    setActions(a);
+    setFigure('');
   };
 
   const onClear = () => {
@@ -108,6 +110,11 @@ function App() {
     setFigure('');
     setActions('');
   };
+
+  console.log('action ', action);
+  console.log('figure ', figure);
+  console.log('number ', number);
+  console.log('result ', result);
 
   return (
     <div className="container">
