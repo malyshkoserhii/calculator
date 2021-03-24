@@ -44,7 +44,6 @@ function App() {
         setResult(state => state / number);
         break;
       case actionType.equal:
-        console.log('result after =', result);
         return result;
       default:
         return;
